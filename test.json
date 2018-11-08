@@ -1,0 +1,2 @@
+{ "name": "mySensor",  "sensordatavalues": [ { "value_type": "Gas", "value ":  "$RANDOM"  } ] }
+

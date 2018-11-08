@@ -1,0 +1,12 @@
+<events xmlns="http://xmlns.opennms.org/xsd/eventconf">
+    <event>
+        <uei>uei.opennms.org/plugin/MqttReceiver/timtam/kitchen</uei>
+        <event-label>MQTT: Timtam kitchen lab event</event-label>
+        <descr>This is our Timtam kitchen lab event</descr>
+        <logmsg dest="logndisplay">
+            All the parameters: %parm[all]%
+        </logmsg>
+        <severity>Normal</severity>
+        <alarm-data reduction-key="%uei%:%dpname%:%nodeid%:%interface%:%service%" alarm-type="1" auto-clean="false"/>
+    </event>
+</events>

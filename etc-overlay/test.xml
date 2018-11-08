@@ -1,0 +1,20 @@
+<messageDataParsers>
+  <messageDataParser foreignSource="$topicLevels[4]" payloadType="JSON" compression="UNCOMPRESSED">
+    <subscriptionTopics>
+      <topic>iot/timtam/metric/kitchen/mysensor/gas</topic>
+    </subscriptionTopics>
+    <xml-groups xmlns="http://xmlns.opennms.org/xsd/config/xml-datacollection">
+      <xml-group name="timtam-kitchen-sensor" resource-type="sensors" resource-xpath="/" key-xpath="@name">
+        <xml-object name="instanceResourceID" type="string" xpath="@name" />
+        <xml-object name="gas" type="gauge" xpath="sensordatavalues[@value_type=&quot;Gas&quot;]/value"/>
+      </xml-group>
+    </xml-groups>
+    <xmlRrd step="10">
+      <rra>RRA:AVERAGE:0.5:1:20160</rra>
+      <rra>RRA:AVERAGE:0.5:12:14880</rra>
+      <rra>RRA:AVERAGE:0.5:288:3660</rra>
+      <rra>RRA:MAX:0.5:288:3660</rra>
+      <rra>RRA:MIN:0.5:288:3660</rra>
+    </xmlRrd>
+  </messageDataParser>
+</messageDataParsers>

@@ -6,17 +6,17 @@
   <maxMessageQueueThreads>2</maxMessageQueueThreads>
 
   <createMissingNodes>true</createMissingNodes>
-  <createDummyInterfaces>false</createDummyInterfaces>
+  <createDummyInterfaces>true</createDummyInterfaces>
   <createNodeAssetData>false</createNodeAssetData>
 
   <messageDataParsers>
-    <messageDataParser foreignSource="$topicLevels[4]" payloadType="JSON" compression="UNCOMPRESSED">
+    <messageDataParser foreignSource="$topicLevels[5]" payloadType="JSON" compression="UNCOMPRESSED">
       <subscriptionTopics>
-          <topic>Home/Floor1/Kitchen/Gas_Sensor</topic>
+          <topic>iot/timtam/metric/kitchen/mysensor/gas</topic>
       </subscriptionTopics>
       <xml-groups xmlns="http://xmlns.opennms.org/xsd/config/xml-datacollection">
-        <xml-group name="lufdaten-info-nrz-2018-111" resource-type="sensors" resource-xpath="/" key-xpath="@esp8266id">
-          <xml-object name="instanceResourceID" type="string" xpath="@esp8266id" />
+        <xml-group name="timtam-kitchen-sensor" resource-type="sensors" resource-xpath="/" key-xpath="@name">
+          <xml-object name="instanceResourceID" type="string" xpath="@name" />
           <xml-object name="gas" type="gauge" xpath="sensordatavalues[@value_type=&quot;Gas&quot;]/value"/>
         </xml-group>
       </xml-groups>
@@ -31,18 +31,18 @@
   </messageDataParsers>
 
   <messageEventParsers>
-    <messageEventParser foreignSource="$topicLevels[3]" payloadType="JSON" compression="UNCOMPRESSED">
+    <messageEventParser foreignSource="$topicLevels[5]" payloadType="JSON" compression="UNCOMPRESSED">
       <subscriptionTopics>
-        <topic>iot/timtam/mynode</topic>
+        <topic>iot/timtam/event/kitchen/mysensor/doorlock</topic>
       </subscriptionTopics>
 
       <xml-groups xmlns="http://xmlns.opennms.org/xsd/config/xml-datacollection">
-          <xml-group name="lufdaten-info-nrz-2018-111" resource-type="sensors" resource-xpath="/" key-xpath="@esp8266id">
-              <xml-object name="instanceResourceID" type="string" xpath="@esp8266id" />
+          <xml-group name="timtam-mqtt-lab" resource-type="sensors" resource-xpath="/" key-xpath="@name">
+              <xml-object name="instanceResourceID" type="string" xpath="@name" />
               <xml-object name="gas" type="gauge" xpath="sensordatavalues[@value_type=&quot;Gas&quot;]/value"/>
           </xml-group>
       </xml-groups>
-      <ueiRoot>uei.opennms.org/plugin/MqttReceiver/laurawan</ueiRoot>
+      <ueiRoot>uei.opennms.org/plugin/MqttReceiver/timtam/kitchen</ueiRoot>
     </messageEventParser>
   </messageEventParsers>
 
