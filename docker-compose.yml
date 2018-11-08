@@ -1,0 +1,83 @@
+version: '3.7'
+
+volumes:
+  data-horizon:
+    driver: local
+  data-grafana: {}
+
+services:
+
+  postgres:
+    container_name: postgres
+    image: postgres:10
+    environment:
+      - TZ=Europe/Berlin
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mypass
+    volumes:
+      - ./postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+  horizon:
+    container_name: horizon
+    image: no42org/horizon:23.0.0-b1
+    init: true
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,address=8001,suspend=n
+      - TZ=Europe/Berlin
+      - OPENNMS_DBNAME=horizon
+      - OPENNMS_DBUSER=horizondbuser
+      - OPENNMS_DBPASS=X3uNx8ahZtyi8nJH
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mypass
+    depends_on:
+      - postgres
+    volumes:
+      - ./data:/opennms-data
+      - ./horizon-23.0.0:/opt/opennms/etc
+      - ./etc-overlay:/opt/opennms-etc-overlay
+      - ./deploy:/opt/opennms/deploy
+    command: ["-s"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-I", "http://localhost:8980/opennms/login.jsp"]
+      interval: 1m
+      timeout: 5s
+      retries: 3
+    ports:
+      - "8001:8001"
+      - "8980:8980"
+      - "8101:8101"
+      - "6343:6343/udp"
+
+  mqtt-broker:
+    image: eclipse-mosquitto:1.4.12
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto/config/mosquitto.conf
+      - ./mosquitto-data:/mosquitto/data
+      - ./mosquitto-data:/mosquitto/log
+  grafana:
+    image: opennms/helm:bleeding
+    container_name: grafana
+    environment:
+    - TZ=Europe/Berlin
+    - GF_SERVER_ROOT_URL=http://localhost:3000
+    - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+    - data-grafana:/var/lib/grafana
+    ports:
+    - "3000:3000"

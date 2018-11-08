@@ -1,0 +1,8 @@
+.idea/
+data/
+horizon-23.0.0/
+mosquitto/
+deploy/
+postgresql/
+grafana/
+*.iml

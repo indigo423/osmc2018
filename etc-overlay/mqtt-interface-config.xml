@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mqtt-receiver xmlns="http://xmlns.opennms.org/xsd/config/mqtt-datacollection" xmlns:ns2="http://xmlns.opennms.org/xsd/config/xml-datacollection">
+  <nodeCacheMaxSize>1000</nodeCacheMaxSize>
+  <nodeCacheMaxTtl>0</nodeCacheMaxTtl>
+  <maxMessageQueueLength>1000</maxMessageQueueLength>
+  <maxMessageQueueThreads>2</maxMessageQueueThreads>
+
+  <createMissingNodes>true</createMissingNodes>
+  <createDummyInterfaces>false</createDummyInterfaces>
+  <createNodeAssetData>false</createNodeAssetData>
+
+  <messageDataParsers>
+    <messageDataParser foreignSource="$topicLevels[4]" payloadType="JSON" compression="UNCOMPRESSED">
+      <subscriptionTopics>
+          <topic>Home/Floor1/Kitchen/Gas_Sensor</topic>
+      </subscriptionTopics>
+      <xml-groups xmlns="http://xmlns.opennms.org/xsd/config/xml-datacollection">
+        <xml-group name="lufdaten-info-nrz-2018-111" resource-type="sensors" resource-xpath="/" key-xpath="@esp8266id">
+          <xml-object name="instanceResourceID" type="string" xpath="@esp8266id" />
+          <xml-object name="gas" type="gauge" xpath="sensordatavalues[@value_type=&quot;Gas&quot;]/value"/>
+        </xml-group>
+      </xml-groups>
+      <xmlRrd step="10">
+        <rra>RRA:AVERAGE:0.5:1:20160</rra>
+        <rra>RRA:AVERAGE:0.5:12:14880</rra>
+        <rra>RRA:AVERAGE:0.5:288:3660</rra>
+        <rra>RRA:MAX:0.5:288:3660</rra>
+        <rra>RRA:MIN:0.5:288:3660</rra>
+      </xmlRrd>
+    </messageDataParser>
+  </messageDataParsers>
+
+  <messageEventParsers>
+    <messageEventParser foreignSource="$topicLevels[3]" payloadType="JSON" compression="UNCOMPRESSED">
+      <subscriptionTopics>
+        <topic>iot/timtam/mynode</topic>
+      </subscriptionTopics>
+
+      <xml-groups xmlns="http://xmlns.opennms.org/xsd/config/xml-datacollection">
+          <xml-group name="lufdaten-info-nrz-2018-111" resource-type="sensors" resource-xpath="/" key-xpath="@esp8266id">
+              <xml-object name="instanceResourceID" type="string" xpath="@esp8266id" />
+              <xml-object name="gas" type="gauge" xpath="sensordatavalues[@value_type=&quot;Gas&quot;]/value"/>
+          </xml-group>
+      </xml-groups>
+      <ueiRoot>uei.opennms.org/plugin/MqttReceiver/laurawan</ueiRoot>
+    </messageEventParser>
+  </messageEventParsers>
+
+  <mqttClients>
+    <client clientInstanceId="client1">
+      <brokerUrl>tcp://172.20.11.8:1883</brokerUrl>
+      <clientId>opennms</clientId>
+      <connectionRetryInterval>3000</connectionRetryInterval>
+      <clientConnectionMaxWait>20000</clientConnectionMaxWait>
+      <topicList>
+        <topic qos="0" topic="iot/#" />
+      </topicList>
+      <userName>openhabian</userName>
+      <password>openhabian</password>
+    </client>
+  </mqttClients>
+
+  <messageClients>
+    <message-client clientInstanceId="opennms-rest-client" clientType="opennms-rest-client">
+      <configuration>
+        <client-configuration name="TBD" value="TBD" />
+      </configuration>
+      <topicList>
+        <topic qos="0" topic="rest/luftdaten/#" />
+      </topicList>
+    </message-client>
+  </messageClients>
+</mqtt-receiver>
